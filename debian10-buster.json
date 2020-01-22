@@ -1,0 +1,78 @@
+{
+"variables": { "debian_version": "10.2.0" },
+"builders":
+[{
+	"type": "virtualbox-iso",
+	"boot_command":
+	[
+		"<tab>",
+		"<bs><bs><bs><bs><bs><bs><bs><bs><bs><bs>",
+		"<bs><bs><bs><bs><bs><bs><bs><bs><bs><bs>",
+		"<bs><bs><bs><bs><bs><bs><bs><bs><bs><bs>",
+		"<bs><bs><bs><bs><bs><bs><bs><bs><bs><bs>",
+		"<bs><bs><bs><bs><bs><bs><bs><bs><bs><bs>",
+		"<bs><bs><bs><bs><bs><bs><bs><bs><bs><bs>",
+		"<bs><bs><bs><bs><bs><bs><bs><bs><bs><bs>",
+		"<bs><bs><bs><bs><bs><bs><bs><bs><bs><bs>",
+		"/install.amd/vmlinuz initrd=/install.amd/initrd.gz",
+		" auto=true",
+		" url={{.HTTPIP}}:{{.HTTPPort}}/pressed_debian10-buster.cfg",
+		" hostname=vagrant",
+		" domain=home",
+		" net.ifnames=0",
+		" BOOT_DEBUG=2",
+		" DEBCONF_DEBUG=5",
+		"<enter>"
+	],
+	"boot_wait": "5s",
+	"guest_os_type": "Debian_64",
+	"guest_additions_mode": "upload",
+	"headless": true,
+	"http_directory": "ui-input.http",
+	"iso_checksum_type": "sha512",
+	"iso_checksum_url": "https://cdimage.debian.org/cdimage/release/{{user `debian_version`}}/amd64/iso-cd/SHA512SUMS",
+	"iso_url": "https://cdimage.debian.org/cdimage/release/{{user `debian_version`}}/amd64/iso-cd/debian-{{user `debian_version`}}-amd64-netinst.iso",
+	"ssh_username": "vagrant",
+	"ssh_password": "vagrant",
+	"ssh_port": 22,
+	"ssh_wait_timeout": "60m",
+	"shutdown_command": "echo 'vagrant'|sudo -S /sbin/shutdown -hP now",
+	"guest_additions_path": "VBoxGuestAdditions_{{.Version}}.iso",
+	"virtualbox_version_file": ".vbox_version",
+	"vm_name": "debian-{{user `debian_version`}}-amd64",
+	"vboxmanage":
+	[
+		[ "modifyvm", "{{.Name}}", "--memory", "1024" ],
+		[ "modifyvm", "{{.Name}}", "--cpus", "1" ],
+		[ "modifyvm", "{{.Name}}", "--vram", "32" ],
+		[ "modifyvm", "{{.Name}}", "--nictype1", "virtio" ],
+		[ "modifyvm", "{{.Name}}", "--nictype2", "virtio" ],
+		[ "modifyvm", "{{.Name}}", "--nictype3", "virtio" ],
+		[ "modifyvm", "{{.Name}}", "--nictype4", "virtio" ]
+	],
+	"hard_drive_interface": "sata",
+	"hard_drive_discard": true,
+	"disk_size": 32768
+}],
+"post-processors":
+[{
+	"type": "vagrant",
+	"output": "debian-{{user `debian_version`}}-amd64_{{.Provider}}.box",
+	"compression_level": "9",
+	"only": ["virtualbox-iso"]
+}],
+"provisioners":
+[{
+	"type": "shell",
+	"execute_command": "echo 'vagrant' | {{.Vars}} sudo -E -S bash '{{.Path}}'",
+	"scripts":
+	[
+		"os-scripts.ud/1.sshd.sh",
+		"os-scripts.ud/2.sudoers.sh",
+		"os-scripts.ud/3.install_cli_tools.sh",
+		"os-scripts.ud/4.vagrant.sh",
+		"os-scripts.ud/5.vbaddguest.sh",
+		"os-scripts.ud/6.cleanup.sh"
+	]
+}]
+}
