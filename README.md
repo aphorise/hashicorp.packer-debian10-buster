@@ -7,7 +7,7 @@ Ensure that you already have the following applications installed & working: 1 -
 
 
 ## Usage
-Make all changes as required (such as locations, eg: `d-i mirror/country string Netherlands` in ``input.http/pressed_debian10-buster.cfg``) and thereafter commence with build using `packer` CLI:
+Make all changes as required (such as locations, eg: `d-i mirror/country string Netherlands` in ``ui-input.http/pressed_debian10-buster.cfg``) and thereafter commence with build using `packer` CLI:
 
 ```bash
 packer validate debian10-buster.json && \
@@ -22,7 +22,7 @@ Make adjustments to use appropriate mirrors (which are insecure ftp or http pres
 
 
 ## Reference & Credits:
-Accreditation due for material from other repo's that are worth referencing:
+Accreditation due for material that are from other repo's which also worth referencing:
  * [deimosfr/packer-debian](https://github.com/deimosfr/packer-debian)
  * [rgl/debian-vagrant](https://github.com/rgl/debian-vagrant)
 ------
