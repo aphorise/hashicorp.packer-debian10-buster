@@ -3,7 +3,14 @@ This repo contains a `packer` template for building a Vagrant Base Box of [Debia
 
 
 ### Prerequisites
-Ensure that you already have the following applications installed & working: 1 - [**Virtualbox**](https://www.virtualbox.org/), 2 - [**Vagrant**](https://www.vagrantup.com/), 3 - [**Packer**](https://www.packer.io/)
+Ensure that you already have the following applications installed & working:
+ - [**Virtualbox**](https://www.virtualbox.org/)
+ - [**Virtualbox Guest Additions (VBox GA)**](https://download.virtualbox.org/virtualbox/)
+ - > **MacOS** (aka OSX) - VirtualBox 6.x+ is expected to be shipped with the related .iso present under (eg):
+ `/Applications/VirtualBox.app/Contents/MacOS/VBoxGuestAdditions.iso`
+You may however need to download the .iso specific to your version (mount it) and execute the VBoxDarwinAdditions.pkg
+ - [**Vagrant**](https://www.vagrantup.com/)
+ - [**Packer**](https://www.packer.io/)
 
 
 ## Usage
@@ -14,6 +21,7 @@ packer validate debian10-buster.json && \
 # if output: Template validated successfully. \
 packer build debian10-buster.json
 ```
+
 The resulting Vagrant Base **\*.box** file will be produced in the root of the repository (where no issues / errors).
 
 
@@ -26,4 +34,3 @@ Accreditation due for material that are from other repo's which also worth refer
  * [deimosfr/packer-debian](https://github.com/deimosfr/packer-debian)
  * [rgl/debian-vagrant](https://github.com/rgl/debian-vagrant)
 ------
-

@@ -2,7 +2,35 @@
 "variables": { "debian_version": "10.2.0" },
 "builders":
 [{
+	"name": "vbox-debian-10",
 	"type": "virtualbox-iso",
+	"vm_name": "debian-{{user `debian_version`}}-amd64",		
+	"guest_os_type": "Debian_64",
+	"guest_additions_mode": "upload",
+	"headless": true,
+	"http_directory": "ui-input.http",
+	"vboxmanage":
+	[
+		["modifyvm", "{{.Name}}", "--memory", "2048"],
+		["modifyvm", "{{.Name}}", "--cpus", "2"],
+		["modifyvm", "{{.Name}}", "--vram", "32"],
+		["modifyvm", "{{.Name}}", "--nictype1", "virtio"],
+		["modifyvm", "{{.Name}}", "--nictype2", "virtio"],
+		["modifyvm", "{{.Name}}", "--nictype3", "virtio"],
+		["modifyvm", "{{.Name}}", "--nictype4", "virtio"]
+	],
+	"virtualbox_version_file": ".vbox_version",
+	"disk_size": 32768,
+	"hard_drive_interface": "sata",
+	"hard_drive_discard": true,
+	"iso_checksum_type": "sha512",
+	"iso_checksum_url": "https://cdimage.debian.org/cdimage/release/{{user `debian_version`}}/amd64/iso-cd/SHA512SUMS",
+	"iso_url": "https://cdimage.debian.org/cdimage/release/{{user `debian_version`}}/amd64/iso-cd/debian-{{user `debian_version`}}-amd64-netinst.iso",
+	"ssh_username": "vagrant",
+	"ssh_password": "vagrant",
+	"ssh_wait_timeout": "60m",
+	"ssh_port": 22,
+	"boot_wait": "5s",
 	"boot_command":
 	[
 		"<tab>",
@@ -24,42 +52,15 @@
 		" DEBCONF_DEBUG=5",
 		"<enter>"
 	],
-	"boot_wait": "5s",
-	"guest_os_type": "Debian_64",
-	"guest_additions_mode": "upload",
-	"headless": true,
-	"http_directory": "ui-input.http",
-	"iso_checksum_type": "sha512",
-	"iso_checksum_url": "https://cdimage.debian.org/cdimage/release/{{user `debian_version`}}/amd64/iso-cd/SHA512SUMS",
-	"iso_url": "https://cdimage.debian.org/cdimage/release/{{user `debian_version`}}/amd64/iso-cd/debian-{{user `debian_version`}}-amd64-netinst.iso",
-	"ssh_username": "vagrant",
-	"ssh_password": "vagrant",
-	"ssh_port": 22,
-	"ssh_wait_timeout": "60m",
-	"shutdown_command": "echo 'vagrant'|sudo -S /sbin/shutdown -hP now",
-	"guest_additions_path": "VBoxGuestAdditions_{{.Version}}.iso",
-	"virtualbox_version_file": ".vbox_version",
-	"vm_name": "debian-{{user `debian_version`}}-amd64",
-	"vboxmanage":
-	[
-		[ "modifyvm", "{{.Name}}", "--memory", "1024" ],
-		[ "modifyvm", "{{.Name}}", "--cpus", "1" ],
-		[ "modifyvm", "{{.Name}}", "--vram", "32" ],
-		[ "modifyvm", "{{.Name}}", "--nictype1", "virtio" ],
-		[ "modifyvm", "{{.Name}}", "--nictype2", "virtio" ],
-		[ "modifyvm", "{{.Name}}", "--nictype3", "virtio" ],
-		[ "modifyvm", "{{.Name}}", "--nictype4", "virtio" ]
-	],
-	"hard_drive_interface": "sata",
-	"hard_drive_discard": true,
-	"disk_size": 32768
+	"shutdown_command": "echo vagrant | sudo -S poweroff",
+	"post_shutdown_delay": "2m"
 }],
 "post-processors":
 [{
 	"type": "vagrant",
 	"output": "debian-{{user `debian_version`}}-amd64_{{.Provider}}.box",
 	"compression_level": "9",
-	"only": ["virtualbox-iso"]
+	"only": ["vbox-debian-10"]
 }],
 "provisioners":
 [{
@@ -73,6 +74,7 @@
 		"os-scripts.ud/4.vagrant.sh",
 		"os-scripts.ud/5.vbaddguest.sh",
 		"os-scripts.ud/6.cleanup.sh"
-	]
+	],
+	"only": ["vbox-debian-10"]
 }]
 }
