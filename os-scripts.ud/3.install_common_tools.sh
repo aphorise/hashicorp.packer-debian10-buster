@@ -6,4 +6,4 @@ set -eu ; # abort this script when a command fails or an unset variable is used.
 apt-get update ;
 
 # install curl to fix broken wget while retrieving content from secured sites
-apt-get -yq install curl jq ;
+apt-get -yq install nfs-common curl jq ;

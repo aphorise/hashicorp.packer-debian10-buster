@@ -1,13 +1,30 @@
 {
-"variables": { "debian_version": "10.2.0" },
+"variables":
+{
+	"name": "vbox-debian-10.2.0",
+	"debian_version": "10.2.0",
+	"build_name": "debian-10.2.0",
+	"cpu_cores_build": "1",
+	"memory_build": "2048",
+	"disk_size": "32768",
+	"headless": "false",
+	"iso_url": "https://cdimage.debian.org/cdimage/release/{{user `debian_version`}}/amd64/iso-cd/debian-{{user `debian_version`}}-amd64-netinst.iso",
+	"iso_checksum_url": "https://cdimage.debian.org/cdimage/release/{{user `debian_version`}}/amd64/iso-cd/SHA512SUMS",
+	"iso_checksum_type": "sha512",
+	"ssh_username": "vagrant",
+	"ssh_password": "vagrant",
+	"ssh_port": "22",
+	"hostname": "local.hostname",
+	"domain": "local.domain"
+},
 "builders":
 [{
-	"name": "vbox-debian-10",
 	"type": "virtualbox-iso",
-	"vm_name": "debian-{{user `debian_version`}}-amd64",		
+	"name": "vbox-{{ user `build_name` }}",
+	"vm_name": "{{ user `build_name` }}-vbox",
 	"guest_os_type": "Debian_64",
 	"guest_additions_mode": "upload",
-	"headless": true,
+	"headless": "{{user `headless`}}",
 	"http_directory": "ui-input.http",
 	"vboxmanage":
 	[
@@ -20,16 +37,16 @@
 		["modifyvm", "{{.Name}}", "--nictype4", "virtio"]
 	],
 	"virtualbox_version_file": ".vbox_version",
-	"disk_size": 32768,
+	"disk_size": "{{user `disk_size`}}",
 	"hard_drive_interface": "sata",
 	"hard_drive_discard": true,
-	"iso_checksum_type": "sha512",
-	"iso_checksum_url": "https://cdimage.debian.org/cdimage/release/{{user `debian_version`}}/amd64/iso-cd/SHA512SUMS",
-	"iso_url": "https://cdimage.debian.org/cdimage/release/{{user `debian_version`}}/amd64/iso-cd/debian-{{user `debian_version`}}-amd64-netinst.iso",
-	"ssh_username": "vagrant",
-	"ssh_password": "vagrant",
-	"ssh_wait_timeout": "60m",
-	"ssh_port": 22,
+	"iso_checksum_url": "{{user `iso_checksum_url`}}",
+	"iso_checksum_type": "{{user `iso_checksum_type`}}",
+	"iso_url": "{{user `iso_url`}}",
+	"ssh_username": "{{user `ssh_password`}}",
+	"ssh_password": "{{user `ssh_username`}}",
+	"ssh_wait_timeout": "20m",
+	"ssh_port": "{{user `ssh_port`}}",
 	"boot_wait": "5s",
 	"boot_command":
 	[
@@ -45,8 +62,8 @@
 		"/install.amd/vmlinuz initrd=/install.amd/initrd.gz",
 		" auto=true",
 		" url={{.HTTPIP}}:{{.HTTPPort}}/pressed_debian10-buster.cfg",
-		" hostname=vagrant",
-		" domain=home",
+		" hostname={{user `hostname`}}",
+		" domain={{user `domain`}}",
 		" net.ifnames=0",
 		" BOOT_DEBUG=2",
 		" DEBCONF_DEBUG=5",
@@ -54,13 +71,6 @@
 	],
 	"shutdown_command": "echo vagrant | sudo -S poweroff",
 	"post_shutdown_delay": "2m"
-}],
-"post-processors":
-[{
-	"type": "vagrant",
-	"output": "debian-{{user `debian_version`}}-amd64_{{.Provider}}.box",
-	"compression_level": "9",
-	"only": ["vbox-debian-10"]
 }],
 "provisioners":
 [{
@@ -70,11 +80,17 @@
 	[
 		"os-scripts.ud/1.sshd.sh",
 		"os-scripts.ud/2.sudoers.sh",
-		"os-scripts.ud/3.install_cli_tools.sh",
+		"os-scripts.ud/3.install_common_tools.sh",
 		"os-scripts.ud/4.vagrant.sh",
 		"os-scripts.ud/5.vbaddguest.sh",
 		"os-scripts.ud/6.cleanup.sh"
-	],
-	"only": ["vbox-debian-10"]
+	]
+}],
+"post-processors":
+[{
+	"type": "vagrant",
+	"output": "{{.BuildName}}.box",
+	"compression_level": "9",
+	"keep_input_artifact": false
 }]
 }

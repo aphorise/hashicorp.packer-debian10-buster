@@ -28,6 +28,27 @@ The resulting Vagrant Base **\*.box** file will be produced in the root of the r
 ## Notes
 Make adjustments to use appropriate mirrors (which are insecure ftp or http presently) where intended to extend to make proper use beyond a mere practise / training.
 
+If your development & delivery resource specifications differ (eg - you'd like to use more resource locally) then then update (`debian10-buster.json`) by adding the below noted **`vboxmanage_post`** block (after: *`vboxmanage`*) within the *`builders`* section as well its related **`variables`**:
+```
+"variables":
+{
+    ...
+ 	"cpu_cores_delivery": "1",
+	"memory_delivery": "1024",
+    ...
+},
+"builders":
+[{
+    ...
+	"vboxmanage_post":
+	[
+		[ "modifyvm", "{{.Name}}", "--memory", "{{user `memory_delivery`}}" ],
+		[ "modifyvm", "{{.Name}}", "--cpus", "{{user `cpu_cores_delivery`}}" ]
+	],
+    ...
+}],
+```
+
 
 ## Reference & Credits:
 Accreditation due for material that are from other repo's which also worth referencing:
