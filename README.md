@@ -1,5 +1,5 @@
-# HashiCrop `packer` Template of Debian 10 (buster)
-This repo contains a `packer` template for building a Vagrant Base Box of [Debian 10.x](https://www.debian.org/releases/buster/) (aka buster).
+# HashiCrop `packer` Template of Debian 11 (bullseye)
+This repo contains a `packer` template for building a Vagrant Base Box of [Debian 11.5](https://www.debian.org/releases/bullseye/) (aka bullseye).
 
 
 ### Prerequisites
@@ -14,13 +14,16 @@ You may however need to download the .iso specific to your version (mount it) an
 
 
 ## Usage
-Make all changes as required (such as locations, eg: `d-i mirror/country string Netherlands` in ``ui-input.http/pressed_debian10-buster.cfg``) and thereafter commence with build using `packer` CLI:
+1. Set `"iso_checksum": "sha512:..."` getting the required SUM via the version specific URL & SHASUM path eg:
+   - [https://cdimage.debian.org/cdimage/release/:warning:_***11.5.0***_:warning:/amd64/iso-cd/SHA512SUMS](https://cdimage.debian.org/cdimage/release/11.5.0/amd64/iso-cd/SHA512SUMS)
 
-```bash
-packer validate debian10-buster.json && \
-# if output: Template validated successfully. \
-packer build debian10-buster.json
-```
+2. Make all changes as required (eg: `d-i mirror/country string Netherlands` in `ui-input.http/pressed_debian11-bullseye.cfg`) and thereafter commence with build using `packer` CLI:
+    ```bash
+    packer validate debian11-bullseye.json && \
+    # if output: Template validated successfully. \
+    packer build debian10-bullseye.json
+    ```
+3. Adjust `disk_size` which has been intentional set to 2Gb primary drive only!
 
 The resulting Vagrant Base **\*.box** file will be produced in the root of the repository (where no issues / errors).
 
@@ -28,7 +31,7 @@ The resulting Vagrant Base **\*.box** file will be produced in the root of the r
 ## Notes
 Make adjustments to use appropriate mirrors (which are insecure ftp or http presently) where intended to extend to make proper use beyond a mere practise / training.
 
-If your development & delivery resource specifications differ (eg - you'd like to use more resource locally) then then update (`debian10-buster.json`) by adding the below noted **`vboxmanage_post`** block (after: *`vboxmanage`*) within the *`builders`* section as well its related **`variables`**:
+If your development & delivery resource specifications differ (eg - you'd like to use more resource locally) then then update (`debian11-bullseye.json`) by adding the below noted **`vboxmanage_post`** block (after: *`vboxmanage`*) within the *`builders`* section as well its related **`variables`**:
 ```
 "variables":
 {

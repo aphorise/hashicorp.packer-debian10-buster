@@ -40,5 +40,8 @@ else
     dd if=/dev/zero of=/EMPTY bs=1M || true; rm -f /EMPTY ;
 fi
 
+sed -i 's/GRUB_TIMEOUT=5/GRUB_TIMEOUT=0/g' /etc/default/grub ;
+update-grub ;
+
 # sync data to disk (fix packer)
 sync ;
